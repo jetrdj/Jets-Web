@@ -1,0 +1,514 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useTypingEffect } from "@/hooks/use-typing-effect";
+import { Layout } from "@/components/layout";
+import { AnimatedSection } from "@/components/ui/animated-section";
+import { useSubmitContact } from "@workspace/api-client-react";
+import { 
+  Github, 
+  Linkedin, 
+  Mail, 
+  Instagram, 
+  Terminal, 
+  MapPin, 
+  GraduationCap, 
+  ExternalLink,
+  Send,
+  Camera
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+export default function Home() {
+  const { toast } = useToast();
+  const contactMutation = useSubmitContact();
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    contactMutation.mutate(
+      { data: formData },
+      {
+        onSuccess: (data) => {
+          toast({
+            title: "Message Sent!",
+            description: data.message,
+          });
+          setFormData({ name: "", email: "", message: "" });
+        },
+        onError: () => {
+          toast({
+            title: "Error",
+            description: "Failed to send message. Please try again.",
+            variant: "destructive"
+          });
+        }
+      }
+    );
+  };
+
+  const typingText = useTypingEffect([
+    "HTML Developer", 
+    "CSS Stylist", 
+    "JavaScript Coder", 
+    "Python Learner", 
+    "Problem Solver"
+  ]);
+
+  return (
+    <Layout>
+      {/* HERO SECTION */}
+      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={`${import.meta.env.BASE_URL}images/hero-bg.png`} 
+            alt="Hero Background" 
+            className="w-full h-full object-cover opacity-30 dark:opacity-40"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background"></div>
+        </div>
+
+        {/* Animated Particles */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 rounded-full bg-primary/30"
+              initial={{
+                x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
+                y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
+              }}
+              animate={{
+                y: [null, Math.random() * -200],
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: Math.random() * 5 + 5,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex-1 text-center md:text-left"
+          >
+            <span className="inline-block py-1 px-3 rounded-full bg-primary/10 border border-primary/20 text-primary mb-6 font-medium text-sm">
+              Welcome to my portfolio
+            </span>
+            <h1 className="text-5xl md:text-7xl font-display font-bold text-foreground leading-tight mb-4">
+              Hi, I'm <br />
+              <span className="text-gradient">Jethro Ephraim</span>
+            </h1>
+            <h2 className="text-xl md:text-3xl text-muted-foreground font-medium mb-6 h-10">
+              Aspiring Developer | <span className="text-primary">{typingText}</span>
+              <span className="animate-pulse ml-1">|</span>
+            </h2>
+            <p className="text-muted-foreground max-w-lg mx-auto md:mx-0 mb-8 leading-relaxed">
+              A student developer from India exploring the web, building useful applications, and turning ideas into reality through code.
+            </p>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+              <a 
+                href="#contact" 
+                className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold neon-glow-hover transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
+              >
+                <Mail size={18} />
+                Contact Me
+              </a>
+              <a 
+                href="https://www.linkedin.com/in/jethro-ephraim" 
+                target="_blank" 
+                rel="noreferrer"
+                className="px-8 py-4 rounded-xl glass-panel text-foreground font-semibold hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 flex items-center gap-2"
+              >
+                <Linkedin size={18} className="text-[#0A66C2]" />
+                LinkedIn
+              </a>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex-1 relative flex justify-center"
+          >
+            <div className="relative w-64 h-64 md:w-96 md:h-96">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary to-secondary blur-3xl opacity-30 animate-pulse"></div>
+              <img 
+                src={`${import.meta.env.BASE_URL}images/avatar.png`} 
+                alt="Jethro Ephraim" 
+                className="relative z-10 w-full h-full object-cover rounded-full border-4 border-background shadow-2xl"
+              />
+              
+              {/* Floating badges */}
+              <motion.div 
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-10 -left-6 glass-panel px-4 py-2 rounded-xl text-sm font-bold text-foreground flex items-center gap-2 shadow-xl z-20"
+              >
+                <Terminal size={16} className="text-secondary" /> Web Dev
+              </motion.div>
+              <motion.div 
+                animate={{ y: [0, 15, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-10 -right-6 glass-panel px-4 py-2 rounded-xl text-sm font-bold text-foreground flex items-center gap-2 shadow-xl z-20"
+              >
+                <GraduationCap size={16} className="text-primary" /> Student
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ABOUT SECTION */}
+      <AnimatedSection id="about">
+        <div className="flex flex-col md:flex-row gap-16 items-center">
+          <div className="flex-1 space-y-6">
+            <h2 className="text-3xl md:text-5xl font-display font-bold">
+              About <span className="text-gradient">Me</span>
+            </h2>
+            <div className="w-20 h-1 bg-gradient-to-r from-primary to-transparent rounded-full"></div>
+            
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              I am a passionate student developer who loves building useful applications and exploring new technologies. I started coding with curiosity and grew into someone who enjoys turning ideas into working digital experiences.
+            </p>
+            
+            <div className="space-y-4 pt-4">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-primary/10 text-primary">
+                  <GraduationCap size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-foreground">Education</h4>
+                  <p className="text-muted-foreground">BSc Computer Science</p>
+                  <p className="text-sm text-primary font-medium">Bishop Heber College, Trichy • Graduating April 2026</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-secondary/10 text-secondary">
+                  <MapPin size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-foreground">Location</h4>
+                  <p className="text-muted-foreground">Tirunelveli, Tamil Nadu, India</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex-1 w-full">
+            <div className="glass-card p-6 md:p-8 font-mono text-sm relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent"></div>
+              <div className="flex gap-2 mb-6">
+                <div className="w-3 h-3 rounded-full bg-destructive/80"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+              </div>
+              
+              <div className="space-y-2 text-muted-foreground">
+                <p><span className="text-primary">const</span> <span className="text-secondary">developer</span> = <span className="text-accent">{'{'}</span></p>
+                <p className="pl-4">name: <span className="text-green-400">'Jethro Ephraim'</span>,</p>
+                <p className="pl-4">role: <span className="text-green-400">'Student & Web Developer'</span>,</p>
+                <p className="pl-4">passions: <span className="text-accent">['</span><span className="text-green-400">Coding</span><span className="text-accent">', '</span><span className="text-green-400">Learning</span><span className="text-accent">', '</span><span className="text-green-400">Building</span><span className="text-accent">']</span>,</p>
+                <p className="pl-4">hardWorker: <span className="text-primary">true</span>,</p>
+                <p className="pl-4">sayHi: <span className="text-primary">function</span>() <span className="text-accent">{'{'}</span></p>
+                <p className="pl-8">console.<span className="text-secondary">log</span>(<span className="text-green-400">'Let\'s build something great!'</span>);</p>
+                <p className="pl-4"><span className="text-accent">{'}'}</span></p>
+                <p><span className="text-accent">{'}'}</span>;</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* SKILLS SECTION */}
+      <AnimatedSection id="skills" className="bg-muted/30">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">
+            Technical <span className="text-gradient">Skills</span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Technologies and languages I've been working with to build robust web applications.
+          </p>
+        </div>
+
+        <div className="max-w-3xl mx-auto space-y-8">
+          {[
+            { name: "HTML", level: 85, color: "bg-orange-500" },
+            { name: "CSS", level: 80, color: "bg-blue-500" },
+            { name: "JavaScript", level: 75, color: "bg-yellow-400" },
+            { name: "Python (Basic)", level: 65, color: "bg-blue-400" },
+          ].map((skill, index) => (
+            <div key={skill.name}>
+              <div className="flex justify-between items-end mb-2">
+                <span className="font-bold text-foreground text-lg">{skill.name}</span>
+                <span className="text-muted-foreground">{skill.level}%</span>
+              </div>
+              <div className="h-4 w-full bg-background rounded-full overflow-hidden border border-border/50">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${skill.level}%` }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
+                  className={`h-full ${skill.color} relative overflow-hidden`}
+                >
+                  <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
+                </motion.div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </AnimatedSection>
+
+      {/* PROJECTS SECTION */}
+      <AnimatedSection id="projects">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">
+            Featured <span className="text-gradient">Projects</span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            A selection of my recent work showcasing my abilities in frontend and backend development.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Project 1 */}
+          <div className="glass-card overflow-hidden group flex flex-col">
+            <div className="relative h-64 overflow-hidden">
+              <img 
+                src={`${import.meta.env.BASE_URL}images/project-heritage.png`}
+                alt="Heritage Bazaar" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-80"></div>
+            </div>
+            <div className="p-8 flex-1 flex flex-col">
+              <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
+                Heritage Bazaar
+              </h3>
+              <p className="text-muted-foreground mb-6 flex-1">
+                A Python-based digital marketplace project designed to promote traditional and heritage products. Features a cultural product showcase and robust Python-based backend logic.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-6">
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Python</span>
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">Marketplace</span>
+              </div>
+              <button className="flex items-center gap-2 text-sm font-bold text-foreground hover:text-primary transition-colors w-fit">
+                View Project <ExternalLink size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Project 2 */}
+          <div className="glass-card overflow-hidden group flex flex-col">
+            <div className="relative h-64 overflow-hidden">
+              <img 
+                src={`${import.meta.env.BASE_URL}images/project-expense.png`}
+                alt="Monthly Expense Tracker" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-80"></div>
+            </div>
+            <div className="p-8 flex-1 flex flex-col">
+              <h3 className="text-2xl font-bold mb-2 group-hover:text-secondary transition-colors">
+                Monthly Expense Tracker
+              </h3>
+              <p className="text-muted-foreground mb-6 flex-1">
+                A web application built using HTML, CSS, and JavaScript that allows users to track their monthly expenses, calculate total spending, and manage budgets with a simple interactive UI.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-6">
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">HTML/CSS</span>
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">JavaScript</span>
+              </div>
+              <button className="flex items-center gap-2 text-sm font-bold text-foreground hover:text-secondary transition-colors w-fit">
+                View Project <ExternalLink size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* INSTAGRAM GALLERY SECTION */}
+      <AnimatedSection id="gallery" className="bg-muted/30">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full text-white mb-4 shadow-lg shadow-pink-500/30">
+            <Instagram size={32} />
+          </div>
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">
+            Instagram <span className="text-gradient">Gallery</span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+            A visual journey of my life and code. Due to Instagram's privacy API, here's a beautifully designed placeholder grid.
+          </p>
+          <a 
+            href="https://www.instagram.com/_jet_h__r_o_10" 
+            target="_blank" 
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-background border border-border hover:border-pink-500/50 hover:bg-pink-500/10 text-foreground transition-all duration-300"
+          >
+            📸 Follow @_jet_h__r_o_10
+          </a>
+        </div>
+
+        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6 max-w-5xl mx-auto">
+          {[
+            "h-64 bg-gradient-to-br from-purple-600/80 to-blue-600/80",
+            "h-96 bg-gradient-to-tr from-pink-500/80 to-rose-500/80",
+            "h-72 bg-gradient-to-bl from-cyan-400/80 to-blue-500/80",
+            "h-80 bg-gradient-to-br from-indigo-500/80 to-purple-500/80",
+            "h-64 bg-gradient-to-t from-fuchsia-600/80 to-pink-600/80",
+            "h-96 bg-gradient-to-br from-violet-500/80 to-fuchsia-500/80",
+          ].map((style, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className={`relative rounded-2xl overflow-hidden break-inside-avoid shadow-xl group cursor-pointer ${style}`}
+            >
+              <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <Camera className="text-white/80 w-12 h-12 scale-50 group-hover:scale-100 transition-transform duration-300" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </AnimatedSection>
+
+      {/* CONTACT SECTION */}
+      <AnimatedSection id="contact">
+        <div className="max-w-5xl mx-auto glass-card p-8 md:p-12 relative overflow-hidden">
+          <div className="absolute top-[-50%] right-[-10%] w-[500px] h-[500px] bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
+          
+          <div className="flex flex-col lg:flex-row gap-12 relative z-10">
+            <div className="flex-1 space-y-8">
+              <div>
+                <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">
+                  Get in <span className="text-gradient">Touch</span>
+                </h2>
+                <p className="text-muted-foreground">
+                  Have a question or want to work together? Leave your details and I'll get back to you as soon as possible.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <Mail size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Email</p>
+                    <a href="mailto:jjephraim2006@gmail.com" className="text-foreground hover:text-primary transition-colors">
+                      jjephraim2006@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                    <MapPin size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground font-medium">Location</p>
+                    <p className="text-foreground">Tirunelveli, Tamil Nadu, India</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <a 
+                  href="https://www.linkedin.com/in/jethro-ephraim" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
+                >
+                  <Linkedin size={18} />
+                </a>
+                <a 
+                  href="https://www.instagram.com/_jet_h__r_o_10" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-muted-foreground hover:text-pink-500 hover:border-pink-500/50 transition-all"
+                >
+                  <Instagram size={18} />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+                >
+                  <Github size={18} />
+                </a>
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <form onSubmit={handleContactSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium text-muted-foreground ml-1">Your Name</label>
+                  <input 
+                    type="text" 
+                    id="name"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full bg-background/50 border border-border/50 rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium text-muted-foreground ml-1">Your Email</label>
+                  <input 
+                    type="email" 
+                    id="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    className="w-full bg-background/50 border border-border/50 rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-sm font-medium text-muted-foreground ml-1">Message</label>
+                  <textarea 
+                    id="message"
+                    required
+                    rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    className="w-full bg-background/50 border border-border/50 rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                    placeholder="How can I help you?"
+                  ></textarea>
+                </div>
+                <button 
+                  type="submit" 
+                  disabled={contactMutation.isPending}
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {contactMutation.isPending ? (
+                    "Sending..."
+                  ) : (
+                    <>
+                      Send Message <Send size={18} />
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+    </Layout>
+  );
+}
